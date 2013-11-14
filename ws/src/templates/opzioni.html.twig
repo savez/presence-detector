@@ -1,0 +1,122 @@
+{% extends 'layout.html.twig' %}
+
+{% block container_content %}
+<script>
+$(document).ready(function(){
+  $('#scelta_mese').change(function(){
+      var foo = "{{ app.request.getBaseURL() }}/excelorari/"+$(this).val();
+      $('#stampa_pdf_orari').attr('href',foo);
+  });
+
+  $('.elimina_utente').click(function(e){
+      e.preventDefault();
+      $('#modalDelete #utente').html($(this).attr('data-utente'));
+      $('#modalDelete #href_delete_utente').attr('href','{{ app.request.getBaseURL() }}/deleteutente/'+$(this).attr('data-id'));
+      $('#modalDelete').modal();
+  });
+});
+</script>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+        <!-- Brand and toggle get grouped for better mobile display -->
+
+        <div class="navbar-header">
+          <button data-target=".navbar-ex5-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="{{ app.url_generator.generate('opzioni') }}" class="navbar-brand">Area ammnistrativa</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Benvenuto <strong>{{utente_loggato}}</strong> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li ><a href="{{ app.url_generator.generate('logout') }}"><span class="glyphicon glyphicon-off"></span> Esci</a></li>
+              </ul>
+            </li>
+          </ul>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex5-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="http://{{ app.request.host }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          </ul>
+        </div>
+</nav>        
+
+<div class="alert alert-info">
+<div class="row">
+  <div class="col-md-7">
+<span class="lead"> Salva foglio presenze: </span>
+</div>
+  <div class="col-md-3">
+    <select id="scelta_mese" class="form-control" name="mese">
+      <option {% if mese == 1 %} selected="selected" {% endif %} value="1">Gennaio</option>
+      <option {% if mese == 2 %} selected="selected" {% endif %} value="2">Febbraio</option>
+      <option {% if mese == 3 %} selected="selected" {% endif %} value="3">Marzo</option>
+      <option {% if mese == 4 %} selected="selected" {% endif %} value="4">Aprile</option>
+      <option {% if mese == 5 %} selected="selected" {% endif %} value="5">Maggio</option>
+      <option {% if mese == 6 %} selected="selected" {% endif %} value="6">Giugno</option>
+      <option {% if mese == 7 %} selected="selected" {% endif %} value="7">Luglio</option>
+      <option {% if mese == 8 %} selected="selected" {% endif %} value="8">Agosto</option>
+      <option {% if mese == 9 %} selected="selected" {% endif %} value="9">Settembre</option>
+      <option {% if mese == 10 %} selected="selected" {% endif %} value="10">Ottobre</option>
+      <option {% if mese == 11 %} selected="selected" {% endif %} value="11">Novembre</option>
+      <option {% if mese == 12 %} selected="selected" {% endif %} value="12">Dicembre</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <a id="stampa_pdf_orari" class="btn btn-primary" href="{{ app.request.getBaseURL() }}/excelorari/{{"now"|date("m")}}"><span class="glyphicon glyphicon-print"></span> SALVA PDF</a>
+  </div>
+</div>
+</div>
+
+<div class="">
+  <span class="lead">Elenco Dipendenti</span>
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Operazioni</th>
+        <th>Codice</th>
+        <th>Nome</th>
+        <th>Ultimo accesso</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>
+          <a data-utente="{{user.cognome}} {{user.nome}}" data-id="{{user.codice}}" style="margin-right:15px;" href="#" title="Elimina utente" class="elimina_utente btn btn-default btn-sm"><span class="glyphicon glyphicon-trash"></span> Utente</a>
+          <a style="margin-right:15px;" href="{{ app.request.getBaseURL() }}/singlepdf/{{user.codice}}" title="salva singolo PDF" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-print"></span> Mese corrente</a>
+          <a href="{{ app.request.getBaseURL() }}/viewpresenze/{{user.codice}}/{{"now"|date("m")}}" title="visiona presenze" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open"></span> Presenze</a>
+        </td>
+        <td>{{user.codice}}</td>
+        <td>{{user.cognome}} {{user.nome}}</td>
+        <td><span style="margin-right:15px;">{{user.dataformat}}</span> {{user.orario}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modale alert elimina -->
+  <div class="modal" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span> ATTENZIONE!</p></h4>
+        </div>
+        <div class="modal-body">
+          <p>Vuoi davvero eliminare l'utente <strong><span id="utente" class="lead"></span></strong> ?</p>
+        </div>
+        <div class="modal-footer">
+          <a id="href_delete_utente" href="" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Elimina</a>
+          <a href="" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Annula</a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<!-- ./Modale alert elimina -->
+
+{% endblock %}

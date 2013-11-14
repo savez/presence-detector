@@ -1,0 +1,231 @@
+{% extends 'layout.html.twig' %}
+
+{% block container_content %}
+<script>
+$(document).ready(function(){
+  $('#scelta_mese').change(function(){
+      var foo = "{{ app.request.getBaseURL() }}/viewpresenze/{{id}}/"+$(this).val();
+      $('#viewpresenze_href').attr('href',foo);
+  });
+
+  $('.modifica_presenza').click(function(e){
+      e.preventDefault();
+      $('#mod_giorno').html($(this).attr('data-giorno'));
+      $('#form-modifica input[name="id_orario"]').val($(this).attr('data-idorario'));
+      $('#form-modifica input[name="id_utente"]').val($(this).attr('data-idutente'));
+      $('#form-modifica input[name="mese"]').val($(this).attr('data-mese'));
+
+      $('#modalEdit').modal();
+  });
+
+  $('.elimina_presenza').click(function(e){
+      e.preventDefault();
+      $('#modalDelete #href_delete_presenza').attr('href','{{ app.request.getBaseURL() }}/deletepresenzautente/'+$(this).attr('data-id')+'/'+$(this).attr('data-idu')+'/'+$(this).attr('data-m'));
+      $('#modalDelete').modal();
+  });
+
+  $('#aggiungi_presenza').click(function(e){
+    e.preventDefault();
+    $('#modalAdd #utente').html($(this).attr('data-nomeutente'));
+    $('#modalAdd #id_utente').val($(this).attr('data-idu'));
+    $('#modalAdd').modal();
+  });
+
+  $('#tipologia_orario').change(function(event) {
+    if($(this).val() == 'entrata'){
+      $('#box_ora_entrata').removeClass('hide');
+      $('#box_ora_uscita').addClass('hide');
+    }else if($(this).val() == 'uscita'){
+      $('#box_ora_entrata').addClass('hide');
+      $('#box_ora_uscita').removeClass('hide');
+    }else{
+      $('#box_ora_entrata').addClass('hide');
+      $('#box_ora_uscita').addClass('hide');
+    }
+  });
+
+});
+</script>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+        <!-- Brand and toggle get grouped for better mobile display -->
+
+        <div class="navbar-header">
+          <button data-target=".navbar-ex5-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="{{ app.url_generator.generate('opzioni') }}" class="navbar-brand">Area ammnistrativa</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Benvenuto <strong>{{utente_loggato}}</strong> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li ><a href="{{ app.url_generator.generate('logout') }}"><span class="glyphicon glyphicon-off"></span> Esci</a></li>
+              </ul>
+            </li>
+          </ul>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex5-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="http://{{ app.request.host }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          </ul>
+        </div>
+</nav>       
+
+<div class="alert alert-info">
+  <div class="row">
+    <div class="col-md-7">
+      <span class="lead"> Filtra per mese: </span>
+    </div>
+    <div class="col-md-3">
+        <select id="scelta_mese" class="form-control" name="mese">
+          <option {% if mese_n == 1 %} selected="selected" {% endif %} value="1">Gennaio</option>
+          <option {% if mese_n == 2 %} selected="selected" {% endif %} value="2">Febbraio</option>
+          <option {% if mese_n == 3 %} selected="selected" {% endif %} value="3">Marzo</option>
+          <option {% if mese_n == 4 %} selected="selected" {% endif %} value="4">Aprile</option>
+          <option {% if mese_n == 5 %} selected="selected" {% endif %} value="5">Maggio</option>
+          <option {% if mese_n == 6 %} selected="selected" {% endif %} value="6">Giugno</option>
+          <option {% if mese_n == 7 %} selected="selected" {% endif %} value="7">Luglio</option>
+          <option {% if mese_n == 8 %} selected="selected" {% endif %} value="8">Agosto</option>
+          <option {% if mese_n == 9 %} selected="selected" {% endif %} value="9">Settembre</option>
+          <option {% if mese_n == 10 %} selected="selected" {% endif %} value="10">Ottobre</option>
+          <option {% if mese_n == 11 %} selected="selected" {% endif %} value="11">Novembre</option>
+          <option {% if mese_n == 12 %} selected="selected" {% endif %} value="12">Dicembre</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <a id="viewpresenze_href" class="btn btn-primary" href="{{ app.request.getBaseURL() }}/viewpresenze/{{id}}/{{mese_n}}"><span class="glyphicon glyphicon-search"></span></a>
+    </div>
+  </div>
+</div>
+
+<div class="">
+  <p class="pull-right"><a data-idu="{{id}}" data-nomeutente="{{nome_utente}}" id="aggiungi_presenza" href="#" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span> Aggiungi presenza</a></p>
+  <span class="lead">Presenze di <strong>{{mese}}</strong> utente <strong>{{nome_utente}}</strong></span>
+  <br/><br/>
+  <table class="table table-striped table-condensed table-bordered">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Giorno</th>
+        <th>Ora</th>
+        <th>Tipologia</th>
+        <th>Nota</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for presenza in presenze%}
+      <tr>
+        <td>
+          <a data-m="{{mese_n}}" data-idu="{{presenza.id_utente}}" data-id="{{presenza.id_orario}}" style="margin-right:15px;" href="#" title="Elimina utente" class="elimina_presenza btn btn-default btn-sm"><span class="glyphicon glyphicon-trash"></span> Cancella</a>
+          <a data-idorario="{{presenza.id_orario}}" data-idutente="{{presenza.id_utente}}" data-mese="{{mese_n}}" data-giorno="{{presenza.dataformat}}" data-toggle="modal" href="#" class="btn btn-default btn-sm modifica_presenza"><span class="glyphicon glyphicon-pencil"></span> Modifica</a></td>
+        <td>{{presenza.dataformat}}</td>
+        <td>{{presenza.orario}}</td>
+        <td>{{presenza.tipologia}}</td>
+        <td>{{presenza.nota}}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modale modifica presenza -->
+  <div class="modal" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Modifica presenza del <em><span id="mod_giorno"></span></em></h4>
+        </div>
+        <form id="form-modifica" class="form" action="{{ app.url_generator.generate('modifica') }}" method="post">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Ora entrata</label>
+            <input name="ora" type="time" class="form-control" id="ora" placeholder="">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Nota</label>
+            <input name="nota" type="text" class="form-control" id="nota" placeholder="">
+          </div>
+          <input type="hidden" name="id_orario" value="" />
+          <input type="hidden" name="id_utente" value="" />
+          <input type="hidden" name="mese" value="" />
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Salva</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annulla</button>
+        </div>
+      </form>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<!-- ./Modale modifica presenza -->
+
+<!-- Modale alert elimina -->
+  <div class="modal" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span> ATTENZIONE!</p></h4>
+        </div>
+        <div class="modal-body">
+          <p>Vuoi davvero eliminare questo record?</p>
+        </div>
+        <div class="modal-footer">
+          <a id="href_delete_presenza" href="" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Elimina</a>
+          <a href="" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Annula</a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<!-- ./Modale alert elimina -->
+
+<!-- Modale aggiungi presenza -->
+  <div class="modal" id="modalAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Aggiungi presenza {{"now"|date("d/m/Y")}} <span id="utente"></span></h4>
+        </div>
+        <form id="form-aggiungi" class="form" action="{{ app.url_generator.generate('aggiungi') }}" method="post">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="">Tipologia</label>
+            <select id="tipologia_orario" name="tipologia" class="form-control" required>
+              <option></option>
+              <option value="entrata">Entrata</option>
+              <option value="uscita">Uscita</option>
+              <option value="vario" selected="selected">Vario</option>
+            </select>
+          </div>
+          <div class="form-group hide" id="box_ora_entrata">
+            <label for="">Ora entrata</label>
+            <input name="ora_entrata" type="time" class="form-control" id="ora_entrata" placeholder="">
+          </div>
+          <div class="form-group hide" id="box_ora_uscita">
+            <label for="">Ora uscita</label>
+            <input name="ora_uscita" type="time" class="form-control" id="ora_uscita" placeholder="">
+          </div>
+          <div class="form-group">
+            <label for="">Nota</label>
+            <input required name="nota" type="text" class="form-control" id="nota" placeholder="">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="giorno" id="giorno" value="{{"now"|date("Y-m-d")}}" />
+          <input type="hidden" name="id_utente" id="id_utente" value="" />
+          <input type="hidden" name="mese" id="mese" value="{{mese_n}}" />
+          <button type="submit" class="btn btn-primary">Salva</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annulla</button>
+        </div>
+      </form>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<!-- ./Modale aggiungi presenza -->
+
+{% endblock %}

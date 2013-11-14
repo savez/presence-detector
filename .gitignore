@@ -1,5 +1,3 @@
-INSTALL.txt
-LICENSE.txt
-README.txt
-demos/
-extras/documentation
+ws/src/config.ini
+presenceDetector.sublime-project
+presenceDetector.sublime-workspace

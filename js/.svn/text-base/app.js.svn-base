@@ -1,0 +1,70 @@
+var modulo = angular.module('cruscotto_salute', []);
+
+  function CruscottoSaluteCtrl($scope){
+  	$scope.calculateDate = function(dati){
+      // mapping risultati => messaggio
+      var mapping = new Array(); // BMI,COLESTEROLO, CLICEMIA, PRESSIONE
+      mapping['0000'] = {'stato': 'success','messaggio': '<strong>Tutto bene!</strong><br/>Comunque negli anni è bene mantenere sotto controllo peso e pressione, e una volta ogni 2 anni i più comuni parametri ematochimici.','icona':'icon-thumbs-up'};
+      mapping['1000'] = {'stato': 'success','messaggio': "Un sovrappeso modesto non costituisce un fattore di rischio per la salute, ma se eccessivo, col tempo, può favorire l'insorgenza di alterazioni metaboliche (diabete) e pressorie con effeti nocivi per l'apparato cardio-circolatorio.<br/>La semplice correzione di abitudini alimentri sbagliate associata ad attivit&agrave; fisica &egrave; in grado di riportare il peso corporeo nei limiti di norma.",'icona':'icon-thumbs-up'};
+      mapping['1100'] = {'stato': 'success','messaggio': "Un eccesso ponderale associato ad alterati valori ematici dei grassi rapprersentano, se protratti nel tempo, un fattore di rischio d'insorgenza di complicanze cardio-vascolari.<br/>Una dieta appropriata è in grado di correggere sia l'eccesso ponderale che la dislipidemia, in genere legati ad una scorretta alimentazionedati.E' comunque prudente seguire nel tempo i valori ematici dei grassi anche raggiunto un peso soddisfacente.",'icona':'icon-thumbs-up'};
+      mapping['1110'] = {'stato': 'success','messaggio': "Sovrappeso, dislipidemia ed iperglicemia , specie se associati, aumentano il rischio d'insorgenza di complicanze cardio-vascolaridati.<br/>Queste alterazioni sono per lo più causate da una inappropriata alimentazione, al di là di una predisposizione familiare.<br/>In genere al calo ponderale ottenuto con una dieta appropriata fa seguito la normalizzazione dei valori ematici del glucosio e dei lipididati.<br/>E' comunque opportuno un controllo nel tempo di tali parametri  anche quando si ottenga una normalizzaione del peso corporeo: se si rivelassero ancora alterati si rende necessario un approfondimento diagnostico mirato all'istituzione di una eventuale terapia farmacologica.",'icona':'icon-thumbs-up'};
+      mapping['1111'] = {'stato': 'success','messaggio': "Sovrappeso, alterazione del metabolismo glucidico e lipidico ed ipertensione arteriosa (PA), se associate, rappresentano un importante condizione di rischio per lo sviluppo di complicanze cardiache e vascolaridati.Pertanto si impone una loro correzione.<br/>Il primo provvedimento è una corretta dieta (con ridotto apporto anche salino) che corregga progressivamente l'eccesso ponderale; in molti casi si ottiene parallelamente la correzione delle alterazioni metaboliche legate alla scorretta alimentazionedati.<br/>Anche la PA può conseguentemente migliorare, ma lo stato ipertensivo in molti casi rappresenta una condizione patologica non legata al sovrappeso e pertento richiede indagini mirate ed una terapia farmacologica.",'icona':'icon-thumbs-up'};
+      mapping['0100'] = {'stato': 'success','messaggio': "Un'alterazione dei valori ematici dei grassi è quasi sempre legata ad una scorretta alimentazione anche se può essere facilitata da situazioni 'ormonali' particolari ( es: menopausa della donna).<br/>Un' alimentazione più congrua ed uno stile di vita che contempli una maggiore attività fisica rappresentano spesso un rimedio efficace<br/>Quando tali provvedimenti non risultano efficaci, può essere indicato l'uso di farmaci sotto controllo medico e accertamenti diagnostici mirati nei rari casi che presentino una netta predisposizione familiare alla dislipidemia.",'icona':'icon-thumbs-up'};
+      mapping['0110'] = {'stato': 'success','messaggio': "Una alterazione dei valori ematici dei lipidi e del glucosio è spesso legata ad una incongrua alimentazione, anche in assenza di sovrappeso.<br/>Una dieta appropriata è in grado di dimostrare se tale supposizione è corretta.<br/>E' comunque prudente controllare questi parametri nel tempo, anche nel caso di una loro correzione con la dieta; se tali alterazioni persistessero si rende necessario un approfondimento diagnostico mirato.",'icona':'icon-thumbs-up'};
+      mapping['0111'] = {'stato': 'success','messaggio': "Una alterazione del metabolismo lipidico",'icona':'icon-thumbs-up'};
+      mapping['0010'] = {'stato': 'success','messaggio': "Il riscontro d'iperglicemia a digiuno può essere espressione di malattia diabetica latente o in atto<br/>Spesso, però, è semplicemente legata ad un eccessivo apporto di zuccheri con la dieta e quindi può essere rapidamente corretto correggendo l'alimentazione.<br/>Se non corretta un'iperglicemia persistente nel tempo favorisce l'insorgenza di un diabete stabile con tutte le sue conseguenze; pertanto la persistenza di valori alterati di glicemia nonostante una corretta dieta, deve indurre ad un approfondimento diagnostico mirato.",'icona':'icon-thumbs-up'};
+      mapping['0011'] = {'stato': 'success','messaggio': "Un riscontro occasionale d'iperglicemia a digiuno associata ad uno stato ipertensivo, in assenza di sovrappeso, specie se è presente una familiarità per le stesse condizioni, deve indurre ad uno studio più approfondito del metabolismo glucidico allo scopo di evidenziare un eventuale stato diabetico o pre-diabetico,ed una valutazione cardiologica per stabilire un eventuale trattamento farmacologico dell'ipertensione<br/>Una valutazione delle abitudini alimentari è comunque utile allo scopo di correggere eventuali incongruenze; una correta dieta è comunque il primo provvedimento da attuarsi in questi casi.",'icona':'icon-thumbs-up'};
+      mapping['0001'] = {'stato': 'success','messaggio': "Il riscontro di valori di pressione arteriosa (PA) elevati anche se moderatamente e non costantemente, impone una loro periodica osservazione nel tempo, specie nei casi in cui esista una familiarità per tale patologia<br/>Una dieta con scarso apporto di sale (1-2 gr max. /dì) può essere utile per normalizzare i valori di PAdati.Nel caso in cui i valori di PA risultino costantemente alterati si rende necessaria una valutazione specialistica cardiologica allo scopo di deciderne il trattamento.",'icona':'icon-thumbs-up'};
+      mapping['1010'] = {'stato': 'success','messaggio': "La presenza d'iperglicemia a digiuno in un soggetto  in sovrappeso può originare da un' alimentazione scorretta per  eccessivo apporto di zuccheridati.<br/>Una dieta appropriata è in grado di correggere sia l'eccesso di peso che l'iperglicemiadati.Tuttavia è prudente, a maggior ragione se l'iperglicemia non si normalizza col calo ponderale, controllare nel tempo i valori di glicemia e sottoporsi ad esami che valutino il metabolismo glucidico allo scopo di evidenziare un eventuale stato pre-diasbetico.",'icona':'icon-thumbs-up'};
+      mapping['1001'] = {'stato': 'success','messaggio': "In un soggetto in sovrappeso alterati valori pressori ,specie se incostanti e di entità moderata, possono essere legati allo stato di eccesso ponderale, tanto più quanto questo è maggioredati.Generalmente è consigliabile iniziare con una correzione delle abitudini alimentari con una dieta non solo ipo-calorica ma anche con ridotto apporto salino (1-2 gr max./dì)dati.<br/>In casi in cui l'ipertensione è piu marcata e persistente è necessario associare ai provvedimentio dietetici una valutazione cardiologica mirata anche a stabilire un  trattamento farmaclogico.",'icona':'icon-thumbs-up'};
+      mapping['0101'] = {'stato': 'success','messaggio': "Elevati valori ematici dei lipidi associati ad uno stato ipertensivo rappresentano un fattore di rischio per  lo sviluppo di patologie cardio-vascolaridati.<br/>E' evidente che tale rischio è tanto più consistente tanto è maggiore l'alterazione dei due parametridati.Anche in assenza di sovrappeso, una dieta ipocalorica e con ridotto apporto di sale (1-2 gr max./dì) si rende necessaria per correggere queste alterazioni; nei casi meno critici la dieta può risultare un provvedimento risolutivodati.<br/>E' comunque indicata una sorveglianza nel tempo dei parametri ematici e della pressione arteriosa; se rimanessero alterati si rende necessaria una valutazione clinica metabolica e cardiologica.",'icona':'icon-thumbs-up'};
+      mapping['1011'] = {'stato': 'success','messaggio': "In un soggetto in sovrappeso le alterazioni della glicemia e della pressione arteriosa (PA)  riscontrate sono lievi o moderate, spesso la sola correzione delle abitudini alimentari con una dieta anche a contenuto limitato di sale (1-2 gr max./dì) è in grado di normalizzare sia glicemia che PA, in concomitanza con il progressivo calo ponderale, essendovi spesso una relazione tra eccessiv ed incongrua alimentazione ed alterazione dei suddetti parametridati.Nei casi in cui ciò non si verifichi o nei casi in cui ipertensione e iperglicemia siano più severe (in presenza spesso di una familiarità per tali patologie), si rendono necessri accertamenti clinici sia del metabolidmo glucidico che dell'ipertensione, allo scopo anche di individuare un corretto trattamento farmacologico da associare alla dieta.",'icona':'icon-thumbs-up'};
+      mapping['1101'] = {'stato': 'success','messaggio': "Sovrappeso, dislipidemia ed ipertensione arteriosa  rappresentano, specie se associati, un fattore di rischio per lo sviluppo di complicanze cardio-vascolaridati.Se di lieve entità, la dislipidemia come l'ipertensione possono essere corrette con una dieta mirata ad ottenere un progressivo calo ponderaledati.Tuttavia, nei casi in cui le alterazioni metaboliche e pressorie siano più marcate, alla dieta si deve associare, dopo una corretta valutazione metabolica e cardiologica, un trattamento farmacologico.",'icona':'icon-thumbs-up'};
+
+      var foo = new Array();
+      var rapporto_colesterolo = 0;
+
+  		//BMI
+  		var bmi = dati.peso/[(dati.altezza/10)*(dati.altezza/10)];
+  		if(bmi > 25){
+  			foo[0] = 1;
+  		}else{
+  			foo[0] = 0;
+  		}
+
+      // colesterolo
+      rapporto_colesterolo = dati.hdl/dati.cho;
+      if(dati.sesso == 'maschio'){
+        if(rapporto_colesterolo > 5 || dati.tg > 200)
+         foo[1] = 1;
+        else
+          foo[1] = 0;
+      }else{
+        if(rapporto_colesterolo > 4.5 || dati.tg > 200)
+          foo[1] = 1;
+        else
+          foo[1] = 0;
+      }
+
+  		//glic
+  		if(dati.glic > 120){
+  			foo[2] = 1;
+  		}else{
+  			foo[2] = 0;
+  		}
+
+      //pa_max
+      if(dati.pa_max > 140 || dati.pa_min > 85){
+        foo[3] = 1;
+      }else{
+        foo[3] = 0;
+      }
+
+
+      console.log(foo); // debug per il codice
+
+      foobar = foo.join("");
+  		$scope.risultato = angular.copy(mapping[foobar]);
+   	}
+
+  }

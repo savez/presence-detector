@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="it" ng-app>
+  <head>
+    <meta charset="utf-8">
+            <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,width=device-width,height=device-height,target-densitydpi=device-dpi,user-scalable=yes" />
+
+    <meta name="description" content="">
+    <meta name="author" content="savez">
+
+    <title>Gestore Presenze</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        .paddingbtn{padding:10px;}
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/jquery/2.0.3/jquery-2.0.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="js/app.js"></script>
+    <!-- OROLOGIO -->
+        <!--[if IE]><script type="text/javascript" src="js/coolClock/excanvas.js"></script><![endif]-->
+        <script type="text/javascript" src="js/coolClock/coolclock.js"></script>
+        <script type="text/javascript" src="js/coolClock/moreskins.js"></script>
+  </head>
+
+  <body ng-controller="DipendentiCtrl">
+    <div class="container theme-showcase">
+      <div class="page-header">
+        <h1>Gestore presenze <small>0.3</small></h1>
+      </div>
+        <form class="form" name="registra_entrata" action="" novalidate>
+        <div class="col-sm-4"><canvas id="c1" class="CoolClock" ></canvas><br/><h3 id="data"></h3></div>
+        <div class="col-sm-4">
+        <h2 class="text-left"><span class="text-muted">Codice</span> &nbsp;&nbsp;&nbsp;<strong>{{codice_utente}}</strong></h2><hr/>
+        <span ng-hide="risultato && codice_utente != null">
+        <div class="btn-group btn-group-lg btn-group-justified">
+        <div ng-click="insCifra(1)"  class=" btn btn-lg btn-default"><span class="paddingbtn btncode"><strong>1</strong></span></div>
+        <div ng-click="insCifra(2)"  class=" btn btn-lg btn-default"><spanclass="paddingbtn btncode"><strong>2</strong></span></div>
+        <div ng-click="insCifra(3)"  class=" btn btn-lg btn-default"><spanclass="paddingbtn btncode"><strong>3</strong></span></div>
+    </div>
+    <div class="btn-group btn-group-lg btn-group-justified">
+        <div ng-click="insCifra(4)" class=" btn btn-lg btn-default"><span class="paddingbtn btncode"><strong>4</strong></span></div>
+        <div ng-click="insCifra(5)" class="col-sm-3 btn btn-lg btn-default"><span  class="paddingbtn btncode"><strong>5</strong></span></div>
+        <div ng-click="insCifra(6)" class="col-sm-3 btn btn-lg btn-default"><span  class="paddingbtn btncode"><strong>6</strong></span></div>
+    </div>
+    <div class="btn-group btn-group-lg btn-group-justified"> 
+        <div ng-click="insCifra(7)" class="col-sm-3 btn btn-lg btn-default"><span class="paddingbtn btncode"><strong>7</strong></span></div>
+        <div ng-click="insCifra(8)" class="col-sm-3 btn btn-lg btn-default"><span class="paddingbtn btncode"><strong>8</strong></span></div>
+        <div ng-click="insCifra(9)" class="col-sm-3 btn btn-lg btn-default"><span class="paddingbtn btncode"><strong>9</strong></span></div>
+    </div>
+    <div class="btn-group btn-group-lg btn-group-justified">
+        <div ng-click="resetta()" class="col-sm-3 btn btn-lg btn-default"><span class="paddingbtn">CANC</span></div>
+        <div ng-click="insCifra(0)" class="col-sm-3 btn btn-lg btn-default"><span class="paddingbtn btncode"><strong>0</strong></span></div>
+        <div class="col-sm-3 btn btn-lg btn-default"><span class="paddingbtn"></span></div>
+    </div><br/>
+</span>
+    <button ng-show="!risultato && codice_utente != null" ng-click="RegistraUtente(codice_utente)" class="col-sm-12 btn btn-primary btn-lg"> SALVA PRESENZA</button>
+    <button ng-show="risultato && risultato.stato != 1 && risultato.stato != 3 && codice_utente != null" ng-class="{disabled: (registra_entrata.codice_utente.$invalid)}" ng-click="resetta()" class="lead col-sm-12 btn btn-info btn-lg"> NUOVA REGISTRAZIONE</button>
+    <button ng-show="risultato && risultato.stato == 1 || risultato.stato == 3 && codice_utente != null" ng-class="{disabled: (registra_entrata.codice_utente.$invalid)}" ng-click="resetta()" class="lead col-sm-12 btn btn-info btn-lg"> REINSERISCI IL CODICE</button>
+</form>
+    </div>
+    <div class="col-sm-4"><div>
+            <div ng-show="risultato == '' || !risultato" class="alert alert-info text-center"><h3><span class="label label-info">INFO!</span></h3><p class="lead">Inserire il codice personale</p></div>
+            <div ng-show="risultato != '' && risultato.stato == 0" class="alert alert-success text-center"><h3><span class="label label-success">OK!</span></h3> <p class="lead">Registrazione avvenuta con successo!</p><p>{{risultato.messaggio}}</p></div>
+            <div ng-show="risultato != '' && risultato.stato == 1" class="alert alert-warning text-center "><h3><span class="label label-warning">ATTENZIONE!</span></h3> <p class="lead">Codice utente non valido!</p><p>{{risultato.messaggio}}</p></div>
+            <div ng-show="risultato != '' && risultato.stato == 2" class="alert alert-warning text-center "><h3><span class="label label-warning">ATTENZIONE!</span></h3> <p class="lead">Registrazione gi&agrave; effettuata!</p><p>{{risultato.messaggio}}</p></div>
+            <div ng-show="risultato != '' && risultato.stato == 3" class="alert alert-danger text-center "><h3><span class="label label-danger">NO!</span></h3> <p class="lead">Errore nella registrazione chiamare un responsabile!</p><p>{{risultato.messaggio}}</p></div>
+        </div>
+    </div>
+    </div> <!-- /container -->
+    <div id="footer">
+      <div class="container">
+        <p class="text-right"><a href="/ws/web/">AREA RISERVATA </a></p>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
