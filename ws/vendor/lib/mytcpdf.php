@@ -8,7 +8,7 @@ class MYTCPDF extends TCPDF {
         //$this->SetY(5);
         // Set font
         $this->SetFont('Times', 'I', 10);
-        $this->Cell(0, 15, "Nuova Iride società cooperativa sociale ONLUS", 0, false, 'R', 0, '', 0, false, 'T', 'M');
+        $this->Cell(0, 15, "", 0, false, 'R', 0, '', 0, false, 'T', 'M');
         $this->Ln(5);
     }
 
@@ -22,7 +22,7 @@ class MYTCPDF extends TCPDF {
         $x = $this->GetX();
         $this->Cell(0, 15, "Firma", 0, false, 'L', 0, '', 0, false, 'T', 'M');
         $this->SetX($x);
-        $this->Cell(0, 15, "Nuova Iride", 0, false, 'R', 0, '', 0, false, 'T', 'M');
+        $this->Cell(0, 15, "Firma Azienda", 0, false, 'R', 0, '', 0, false, 'T', 'M');
     }
 }
 ?>
