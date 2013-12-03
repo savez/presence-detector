@@ -111,9 +111,9 @@ abstract class Repository
 
 
     public function allUserAndInsert(){
-        return $this->db->fetchAll("SELECT DISTINCT (u.codice),u.nome,u.cognome,DATE_FORMAT(o.giorno,'%d/%m/%Y') as dataformat, o.orario 
+        return $this->db->fetchAll("SELECT  DISTINCT(u.codice),u.nome,u.cognome,DATE_FORMAT(o.giorno,'%d/%m/%Y') as dataformat, o.orario 
                                             FROM utente u
-                                            JOIN orario o ON o.id_utente = u.codice 
+                                            LEFT JOIN orario o ON  u.codice = o.id_utente
                                             WHERE o.giorno = (SELECT MAX(giorno) 
                                             FROM orario o2 WHERE o.id_utente = o2.id_utente)
                                             GROUP BY (u.codice)");

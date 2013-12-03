@@ -39,7 +39,7 @@ $app['db.options'] = array(
     'password' => $config['db.password'],
 );
 
-// DB TABLE
+// DB TABLE & CONFIGURATION
 $app->before(function() use ($app) {
     $app['db.utente'] = $app->share(function($app) {
         return new UtenteRepository($app['db']);

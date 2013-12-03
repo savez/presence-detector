@@ -183,7 +183,7 @@ $app->match('/opzioni/', function(Request $request) use ($app){
 		return $app->redirect($request->getBasePath().'/');
 
 	$u = $app['session']->get('user');
-	$users = $app['db.utente']->allUserAndInsert();
+	$users = $app['db.utente']->allUser();
     return $app['twig']->render('opzioni.html.twig',array('mese' => date("m"),
     														'utente_loggato'=>$u['nome'],
     														'users'=>$users));
@@ -308,5 +308,51 @@ $app->post('/aggiungi', function(Request $request) use ($app){
 
 	return $app->redirect($request->getBasePath().'/viewpresenze/'.$idu.'/'.$m);
 })->bind('aggiungi');
+
+
+// Aggiungi inserimento dipendente
+$app->post('/adduser', function(Request $request) use ($app){
+	if($app['session']->get('isAuthenticated') == false && $request->getPathInfo() != '/')
+		return $app->redirect($request->getBasePath().'/');
+
+	$nome = $request->request->get('nome');
+	$cognome = $request->request->get('cognome');
+	$codice = $request->request->get('codice');
+	$ruolo = 'dipendente';
+
+	try{
+		$app['db.utente']->insert(array(
+						'nome'=>$nome,
+						'cognome'=>$cognome,
+						'codice'=>$codice,
+						'ruolo'=>$ruolo
+						));
+	}catch(Exception $e){
+		echo $e;
+		die;
+	}
+	
+
+	return $app->redirect($request->getBasePath().'/opzioni');
+})->bind('adduser');
+
+// check codice utente
+$app->post('/checkcodice', function(Request $request) use ($app){
+	if($app['session']->get('isAuthenticated') == false && $request->getPathInfo() != '/')
+		return $app->redirect($request->getBasePath().'/');
+
+	$cod_utente = $request->request->get('cod_utente');
+	$result_codUser = $app['db.utente']->checkCodUser($cod_utente);
+	if(count($result_codUser) >= 1){ 
+		$return = array('stato'=>0);
+	}else{
+		$return = array('stato'=>1);
+	}
+	return $app->json($return);
+})->bind('checkcodice');
+
+
+
+
 
 return $app;

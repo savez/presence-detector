@@ -39,47 +39,54 @@ $(document).ready(function(){
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex5-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="http://{{ app.request.host }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            <li class=""><a href="http://{{ app.request.host }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            <li class="active"><a href="{{ app.url_generator.generate('opzioni') }}"><span class="glyphicon glyphicon-dashboard"></span> Amministrazione</a></li>
           </ul>
         </div>
 </nav>        
 
-<div class="alert alert-info">
 <div class="row">
-  <div class="col-md-7">
-<span class="lead"> Salva foglio presenze: </span>
-</div>
-  <div class="col-md-3">
-    <select id="scelta_mese" class="form-control" name="mese">
-      <option {% if mese == 1 %} selected="selected" {% endif %} value="1">Gennaio</option>
-      <option {% if mese == 2 %} selected="selected" {% endif %} value="2">Febbraio</option>
-      <option {% if mese == 3 %} selected="selected" {% endif %} value="3">Marzo</option>
-      <option {% if mese == 4 %} selected="selected" {% endif %} value="4">Aprile</option>
-      <option {% if mese == 5 %} selected="selected" {% endif %} value="5">Maggio</option>
-      <option {% if mese == 6 %} selected="selected" {% endif %} value="6">Giugno</option>
-      <option {% if mese == 7 %} selected="selected" {% endif %} value="7">Luglio</option>
-      <option {% if mese == 8 %} selected="selected" {% endif %} value="8">Agosto</option>
-      <option {% if mese == 9 %} selected="selected" {% endif %} value="9">Settembre</option>
-      <option {% if mese == 10 %} selected="selected" {% endif %} value="10">Ottobre</option>
-      <option {% if mese == 11 %} selected="selected" {% endif %} value="11">Novembre</option>
-      <option {% if mese == 12 %} selected="selected" {% endif %} value="12">Dicembre</option>
-    </select>
+  <div class="col-md-5">
+    <h1 >Elenco Dipendenti</h1>
   </div>
-  <div class="col-md-2">
-    <a id="stampa_pdf_orari" class="btn btn-primary" href="{{ app.request.getBaseURL() }}/excelorari/{{"now"|date("m")}}"><span class="glyphicon glyphicon-print"></span> SALVA PDF</a>
+  <div class="col-md-7 alert alert-info">
+    <div class="row">
+      <div class="">
+        <div class="col-md-5">
+          <h4> Salva foglio presenze: </h4>
+        </div>
+        <div class="col-md-5">
+          <select id="scelta_mese" class="form-control" name="mese">
+            <option {% if mese == 1 %} selected="selected" {% endif %} value="1">Gennaio</option>
+            <option {% if mese == 2 %} selected="selected" {% endif %} value="2">Febbraio</option>
+            <option {% if mese == 3 %} selected="selected" {% endif %} value="3">Marzo</option>
+            <option {% if mese == 4 %} selected="selected" {% endif %} value="4">Aprile</option>
+            <option {% if mese == 5 %} selected="selected" {% endif %} value="5">Maggio</option>
+            <option {% if mese == 6 %} selected="selected" {% endif %} value="6">Giugno</option>
+            <option {% if mese == 7 %} selected="selected" {% endif %} value="7">Luglio</option>
+            <option {% if mese == 8 %} selected="selected" {% endif %} value="8">Agosto</option>
+            <option {% if mese == 9 %} selected="selected" {% endif %} value="9">Settembre</option>
+            <option {% if mese == 10 %} selected="selected" {% endif %} value="10">Ottobre</option>
+            <option {% if mese == 11 %} selected="selected" {% endif %} value="11">Novembre</option>
+            <option {% if mese == 12 %} selected="selected" {% endif %} value="12">Dicembre</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <a id="stampa_pdf_orari" class="btn btn-primary" href="{{ app.request.getBaseURL() }}/excelorari/{{"now"|date("m")}}"><span class="glyphicon glyphicon-print"></span> PDF</a>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 </div>
 
 <div class="">
-  <span class="lead">Elenco Dipendenti</span>
+    <p class="pull-right"><a id="aggiungi_presenza" href="#modalAddUser" class="btn btn-primary btn-sm" data-toggle="modal"><span class="glyphicon glyphicon-plus"></span> Aggiungi utente</a></p>
   <table class="table table-striped table-bordered table-condensed">
     <thead>
       <tr>
         <th>Operazioni</th>
         <th>Codice</th>
         <th>Nome</th>
-        <th>Ultimo accesso</th>
       </tr>
     </thead>
     <tbody>
@@ -90,9 +97,8 @@ $(document).ready(function(){
           <a style="margin-right:15px;" href="{{ app.request.getBaseURL() }}/singlepdf/{{user.codice}}" title="salva singolo PDF" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-print"></span> Mese corrente</a>
           <a href="{{ app.request.getBaseURL() }}/viewpresenze/{{user.codice}}/{{"now"|date("m")}}" title="visiona presenze" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-eye-open"></span> Presenze</a>
         </td>
-        <td>{{user.codice}}</td>
+        <td><span class="lead">{{user.codice}}</span></td>
         <td>{{user.cognome}} {{user.nome}}</td>
-        <td><span style="margin-right:15px;">{{user.dataformat}}</span> {{user.orario}}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -118,5 +124,41 @@ $(document).ready(function(){
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 <!-- ./Modale alert elimina -->
+
+<!-- Modale alert aggiunta utente -->
+  <div class="modal" id="modalAddUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Aggiungi dipendente</h4>
+        </div>
+        <form id="adduserForm" ng-controller="AddUserCtrl" name="adduserForm" class="form" action="{{app.url_generator.generate('adduser')}}" method="post">
+        <div class="modal-body">
+          <div class="form-group" id="box_codice">
+            <span class="pull-right" ng-show="adduserForm.codice.$invalid || checkCodice == false"><p class="text-danger"> Codice non valido!</p></span>
+            <label for="codice">Codice </label>
+            <input required ng-model="codice" ng-change="ControlloCodice(codice)" name="codice" type="number" ng-min="1" ng-max="4" class="form-control" id="codice" placeholder="">
+          </div>
+          <div class="form-group" id="box_nome">
+            <span class="pull-right" ng-show="adduserForm.nome.$invalid"><p class="text-danger"> Compilare campo!</p></span>
+            <label for="nome">Nome</label>
+            <input required name="nome" type="text" ng-model="nome" class="form-control" id="nome" placeholder="">
+          </div>
+          <div class="form-group" id="box_cognome">
+            <span class="pull-right" ng-show="adduserForm.cognome.$invalid"><p class="text-danger"> Compilare campo!</p></span>
+            <label for="cognome">Cognome</label>
+            <input required name="cognome" type="text" ng-model="cognome" class="form-control" id="cognome" placeholder="">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button ng-show="adduserForm.$valid" type="submit" class="btn btn-primary">Salva</button>
+          <a href="" class="btn btn-default" data-dismiss="modal" aria-hidden="true">Annula</a>
+        </div>
+      </form>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<!-- ./Modale alert aggiunta utente -->
 
 {% endblock %}
